@@ -13,7 +13,7 @@ import pandas as pd
 
 class Agent(object):
 
-    def __init__(self, lable , position , state_begin , actions, learning_rate=0.9, reward_decay=0.9, e_greedy=0.9 ):
+    def __init__(self, lable , position , state_begin , actions, learning_rate=0.1, reward_decay=0.9, e_greedy=0.9 ):
         self.lable = lable  # lable是该探测源agent的编号，从0开始
         self.position = position  # position是该探测源agent的UI界面上的坐标,是一个二维数组
         self.line = None  # 此探测源agent对应于UI界面的直线对象，初始值为空

@@ -156,7 +156,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
         while i<Number_target+1:
             origin_x = random.randint(5, 895)
             origin_y = random.randint(5, 595)
-            origin = np.array([origin_x, origin_y])  # create origin 圆心，横坐标为0到600 纵坐标为0到400,但为了不画在边缘，所以边界减小5
+            origin = np.array([origin_x, origin_y])  # create origin 圆心，横坐标为0到900 纵坐标为0到600,但为了不画在边缘，所以边界减小5
             oval_target = self.frame_algo_run_canvas.create_oval(
                 origin[0] - 5, origin[1] - 5,
                 origin[0] + 5, origin[1] + 5,
@@ -175,7 +175,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
         while i < Number_agent:
             origin_x = random.randint(3, 897)
             origin_y = random.randint(3, 597)
-            origin = np.array([origin_x, origin_y])  # create origin 圆心，横坐标为0到600 纵坐标为0到400,但为了不画在边缘，所以边界减小1
+            origin = np.array([origin_x, origin_y])  # create origin 圆心，横坐标为0到900 纵坐标为0到600,但为了不画在边缘，所以边界减小1
             oval_agent = self.frame_algo_run_canvas.create_oval(
                 origin[0] - 3, origin[1] - 3,
                 origin[0] + 3, origin[1] + 3,
