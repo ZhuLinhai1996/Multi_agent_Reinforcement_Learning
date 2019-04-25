@@ -208,9 +208,9 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
         agent.line = None
 
     "计算回报；绘制连线；在agent探测的当前target.agent_num_list中去掉它；在agent探测的下一target.agent_num_list中加入它"
-    "输入参数 agent:一个探测源对象 Target_list:包含所有探测目标对象的列表"
-    def step(self , agent , Target_list):
-        agent_state_now = agent.state_current  # 当前状态，即某一探测目标的标号
+    "输入参数 agent:一个探测源对象 Target_list:包含所有探测目标对象的列表 MARL:包含所有探测源agent对象的列表"
+    def step(self , agent , Target_list , MARL):
+        agent_state_now = agent.state_current  # 上一状态状态，即某一探测目标的标号
         agent_state_next = agent.state_next  # 下一状态，即某一探测目标的标号
 
         if agent_state_next == 0:  # 下一状态为空闲态
@@ -223,8 +223,15 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             Target_list[agent_state_next].agent_num_list.append(agent.lable)  # 在agent探测的下一target.agent_num_list中加入它
             return reward
         else:  # 下一状态不是空闲态
-            if len(Target_list[agent_state_next].agent_num_list) < Threshold:  # 下一状态对应的探测目标未饱和
-                reward = 100  # 回报为100
+            # 必须先进行：在agent探测的当前target.agent_num_list中去掉它
+            if agent.lable in Target_list[agent_state_now].agent_num_list:
+                Target_list[agent_state_now].agent_num_list.remove(agent.lable)
+
+            if Target_list[agent_state_next].sum_power(MARL) < Target_list[agent_state_next].power_min:  # 下一状态对应的探测目标未饱和
+                # 计算agent与目标的距离
+                #distance = ((agent.position[0] - Target_list[agent_state_next].position[0]) ** 2 + (agent.position[1] - Target_list[agent_state_next].position[1]) ** 2) ** 0.5
+                #reward = 600-distance  # 回报为100-距离
+                reward = 100
 
                 # 绘制连线,并保存
                 line = self.frame_algo_run_canvas.create_line(Target_list[agent_state_next].position[0] , Target_list[agent_state_next].position[1],
@@ -232,13 +239,14 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
                 self.list_lines.append(line)
                 agent.line = line
 
-                if agent.lable in Target_list[agent_state_now].agent_num_list:
-                    Target_list[agent_state_now].agent_num_list.remove(agent.lable)  # 在agent探测的当前target.agent_num_list中去掉它
                 Target_list[agent_state_next].agent_num_list.append(agent.lable)  # 在agent探测的下一target.agent_num_list中加入它
 
                 return reward
-            elif len(Target_list[agent_state_next].agent_num_list) >= Threshold:  # 下一状态对应的探测目标已饱和
-                reward = -100  # 回报为100
+            elif Target_list[agent_state_next].sum_power(MARL) >= Target_list[agent_state_next].power_min:  # 下一状态对应的探测目标已饱和
+                # 计算agent与目标的距离
+                #distance = ((agent.position[0] - Target_list[agent_state_next].position[0]) ** 2 + (agent.position[1] - Target_list[agent_state_next].position[1]) ** 2) ** 0.5
+                #reward = -600-distance  # 回报为100-距离
+                reward = -100
 
                 # 绘制连线,并保存
                 line = self.frame_algo_run_canvas.create_line(Target_list[agent_state_next].position[0],Target_list[agent_state_next].position[1],
@@ -246,8 +254,6 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
                 self.list_lines.append(line)
                 agent.line = line
 
-                if agent.lable in Target_list[agent_state_now].agent_num_list:
-                    Target_list[agent_state_now].agent_num_list.remove(agent.lable)  # 在agent探测的当前target.agent_num_list中去掉它
                 Target_list[agent_state_next].agent_num_list.append(agent.lable)  # 在agent探测的下一target.agent_num_list中加入它
 
                 return reward
@@ -271,7 +277,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
         for i in range(int(self.target_num.get())+1):
             target = Target(lable=i , position=self.dict_target[str(i)])
             Target_list.append(target)
-        """
+
         "输出一下，看初始化是否正确"
         for i in range(int(self.agent_num.get())):
             print(MARL[i].__dict__)
@@ -279,29 +285,30 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
         for i in range(int(self.target_num.get())+1):
             print(Target_list[i].__dict__)
             print("\n")
-       """
+
         "开始训练过程"
         episode = 0
         while (episode < int(self.MGRL_TrainNum.get())):  # 根据输入的训练次数进行相应次数的训练，每次训练都对所有agent进行一次学习，即q表更新
-            # 删除原有连线
+            # 删除原有所有连线
             #self.delet_all_lines()
 
             for i in range(int(self.agent_num.get())):
+                print("训练次数：" + str(episode) + "  agent编号：" + str(i))
+
                 # 删除此agent对应的UI界面上的直线
                 self.delet_one_line(MARL[i])
 
-                print("训练次数：" + str(episode) + "  agent编号：" + str(i))
-                # 刷新
+                # 刷新UI
                 self.render()
 
                 # 选择动作
-                MARL[i].choose_action()
+                MARL[i].choose_action(Target_list , MARL , Threshold)
 
                 # 在agent对象内部执行动作，现在对象内部既有当前状态信息，又有下一状态信息
                 MARL[i].do_action()
 
-                # 在UI界面执行动作，并获得奖赏。  注：由于此步骤同时设计探测源 与 探测目标，所以不能写到探测源的抽象类Agent中
-                reward = self.step(MARL[i] , Target_list)
+                # 在UI界面执行动作，并获得奖赏。  注：由于此步骤同时涉及探测源 与 探测目标，所以不能写到探测源的抽象类Agent中
+                reward = self.step(MARL[i] , Target_list , MARL)
 
                 # agent对象进行一次学习，并在对象内部更新了状态
                 MARL[i].learn(reward)
@@ -312,16 +319,16 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             # 输出每个探测目标target的agent_num_list，看看那些探测源agent在探测他
             for i in range(int(self.target_num.get()) + 1):
                 print("探测目标(Target)编号：" + str(i) + "  " + "对其进行探测的探测源(Agent)的编号：" + str(Target_list[i].agent_num_list) )
-
+            """
             # 判断是不是每个探测目标都能够被探测到，若是则结束强化学习
             sign = True
             i=1
             while(i < int(self.target_num.get())+1):
-                if len(Target_list[i].agent_num_list) != Threshold:
+                if Target_list[i].sum_power(MARL) < Target_list[i].power_min:
                     sign = False
                 i=i+1
             if sign: break
-
+            """
             episode = episode + 1
 
 
