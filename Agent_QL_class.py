@@ -67,7 +67,10 @@ class Agent(object):
                 else:
                     # 动作价值不考虑饱和界限
                     distance = ((self.position[0] - Target_list[i].position[0]) ** 2 + (self.position[1] - Target_list[i].position[1]) ** 2) ** 0.5
-                    state_action1[i] = state_action1[i] - int(distance) - int(Target_list[i].sum_power(MARL)) * 10
+                    if distance>450:  # 当距离超过半图距离时，将距离因素占比急剧增大，实现超出探测距离的效果
+                        state_action1[i] = state_action1[i] - int(distance)*1000 - int(Target_list[i].sum_power(MARL)) * 10
+                    else:
+                        state_action1[i] = state_action1[i] - int(distance) - int(Target_list[i].sum_power(MARL)) * 10
 
             # 获取最大q值
             #action_value_max = state_action1.values.argmax()
@@ -109,8 +112,10 @@ class Agent(object):
                     state_action1[i] = state_action1[i] + 1080 + 0
                 else:
                     # 动作价值不考虑饱和界限
-                    distance = ((self.position[0] - Target_list[i].position[0]) ** 2 + (self.position[1] - Target_list[i].position[1]) ** 2) ** 0.5
-                    state_action1[i] = state_action1[i] + int(distance) + int(Target_list[i].sum_power(MARL)) * 10
+                    if distance>450:  # 当距离超过半图距离时，将距离因素占比急剧增大，实现超出探测距离的效果
+                        state_action1[i] = state_action1[i] + int(distance)*1000 + int(Target_list[i].sum_power(MARL)) * 10
+                    else:
+                        state_action1[i] = state_action1[i] + int(distance) + int(Target_list[i].sum_power(MARL)) * 10
 
         else:
             # choose random action

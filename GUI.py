@@ -229,9 +229,9 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
 
             if Target_list[agent_state_next].sum_power(MARL) < Target_list[agent_state_next].power_min:  # 下一状态对应的探测目标未饱和
                 # 计算agent与目标的距离
-                #distance = ((agent.position[0] - Target_list[agent_state_next].position[0]) ** 2 + (agent.position[1] - Target_list[agent_state_next].position[1]) ** 2) ** 0.5
+                distance = int( ((agent.position[0] - Target_list[agent_state_next].position[0]) ** 2 + (agent.position[1] - Target_list[agent_state_next].position[1]) ** 2) ** 0.5 )
                 #reward = 600-distance  # 回报为100-距离
-                reward = 100
+                reward = 1000 - distance
 
                 # 绘制连线,并保存
                 line = self.frame_algo_run_canvas.create_line(Target_list[agent_state_next].position[0] , Target_list[agent_state_next].position[1],
@@ -244,9 +244,9 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
                 return reward
             elif Target_list[agent_state_next].sum_power(MARL) >= Target_list[agent_state_next].power_min:  # 下一状态对应的探测目标已饱和
                 # 计算agent与目标的距离
-                #distance = ((agent.position[0] - Target_list[agent_state_next].position[0]) ** 2 + (agent.position[1] - Target_list[agent_state_next].position[1]) ** 2) ** 0.5
+                distance = int( ((agent.position[0] - Target_list[agent_state_next].position[0]) ** 2 + (agent.position[1] - Target_list[agent_state_next].position[1]) ** 2) ** 0.5 )
                 #reward = -600-distance  # 回报为100-距离
-                reward = -100
+                reward = -1000 - distance
 
                 # 绘制连线,并保存
                 line = self.frame_algo_run_canvas.create_line(Target_list[agent_state_next].position[0],Target_list[agent_state_next].position[1],
@@ -319,7 +319,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             # 输出每个探测目标target的agent_num_list，看看那些探测源agent在探测他
             for i in range(int(self.target_num.get()) + 1):
                 print("探测目标(Target)编号：" + str(i) + "  " + "对其进行探测的探测源(Agent)的编号：" + str(Target_list[i].agent_num_list) )
-            """
+
             # 判断是不是每个探测目标都能够被探测到，若是则结束强化学习
             sign = True
             i=1
@@ -328,7 +328,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
                     sign = False
                 i=i+1
             if sign: break
-            """
+
             episode = episode + 1
 
 
