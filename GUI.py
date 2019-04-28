@@ -8,6 +8,7 @@ author: 朱林海
 from Agent_QL_class import Agent
 from Target_class import Target
 
+from scipy import optimize as op
 import numpy as np
 import time
 import sys
@@ -286,7 +287,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             print(Target_list[i].__dict__)
             print("\n")
 
-        "开始训练过程"
+        "开始强化学习训练过程，训练次数由输入的参数控制"
         episode = 0
         while (episode < int(self.MGRL_TrainNum.get())):  # 根据输入的训练次数进行相应次数的训练，每次训练都对所有agent进行一次学习，即q表更新
             # 删除原有所有连线
@@ -298,7 +299,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
                 # 删除此agent对应的UI界面上的直线
                 self.delet_one_line(MARL[i])
 
-                # 刷新UI
+                # 刷新UI，留出绘制直线的时间
                 self.render()
 
                 # 选择动作
@@ -319,7 +320,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             # 输出每个探测目标target的agent_num_list，看看那些探测源agent在探测他
             for i in range(int(self.target_num.get()) + 1):
                 print("探测目标(Target)编号：" + str(i) + "  " + "对其进行探测的探测源(Agent)的编号：" + str(Target_list[i].agent_num_list) )
-
+            """
             # 判断是不是每个探测目标都能够被探测到，若是则结束强化学习
             sign = True
             i=1
@@ -328,8 +329,55 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
                     sign = False
                 i=i+1
             if sign: break
-
+            """
             episode = episode + 1
+
+        """
+        强化学习训练完成之后，再对分配给每个探测目标Target的探测源agent进行功率优化。
+        此过程需要Target_list、MARL两个列表中，target和agent的位置信息、agent的分配情况信息
+        对每个探测目标target相关联的探测源agent的功率进行线性优化的表达式如下：
+            min:sum_power = p1 + p2 + p3 + ...... + pn
+                -p1/r1^2 - p2/r2^2 - ...... - pn/rn^2 <= -target.power_min
+                0 <= pi <= agent.power_average*2
+        """
+        # 遍历每个Target
+        for i in range(int(self.target_num.get()) + 1):
+            if i==0: pass
+            else:
+                print("此target编号：" + str(Target_list[i].lable) + " 对其进行探测的agent编号：" + str(Target_list[i].agent_num_list))
+                agent_num = len(Target_list[i].agent_num_list)
+                print("agent_num:" + str(agent_num))
+
+                rr_list = []  # 记录探测该target的所有agent距其的距离的平方的倒数的相反数
+                for agent_lable in Target_list[i].agent_num_list:
+                    rr = (Target_list[i].position[0] - MARL[agent_lable].position[0])**2 + (Target_list[i].position[1] - MARL[agent_lable].position[1])**2
+                    rr_list.append(-1/rr)
+                print("rr_list:" + str(rr_list))
+
+                k = 0
+                P = []  # 记录所有agent功率取值范围的元组
+                while k<agent_num:
+                    pi = (0, 2 * MARL[0].power_average)  # 功率的取值范围
+                    P.append(pi)
+                    k = k+1
+                P = tuple(P)
+                print("P:" + str(P))
+
+                c = np.array([1] * agent_num)
+                A_ub = np.array([rr_list])
+                B_ub = np.array([-Target_list[i].power_min])
+                print("c:" + str(c))
+                print("A_ub:" + str(A_ub))
+                print("B_ub:" + str(B_ub))
+                res = op.linprog(c=c , A_ub=A_ub , b_ub=B_ub , bounds=P)
+                print("经过优化后的算法参数：" + str(res))
+                # 将优化后的功率记录在每个agent的power_run属性里
+                for power , agent_lable , rr in zip(res.x , Target_list[i].agent_num_list , rr_list):
+                    MARL[agent_lable].power_run = power
+                    print("agent编号：" + str(agent_lable) + "  探测功率：" + str(MARL[agent_lable].power_run) + "  rr：" + str(rr))
+
+
+
 
 
     "GA 算法运行控制按钮回调函数"

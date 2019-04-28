@@ -49,17 +49,6 @@ class Agent(object):
             "非0，即非空闲状态：Q值 - 距离 - 饱和程度*100"
             "0，即空闲状态：Q值 - 平均距离(用对角线距离，1080) - 饱和程度(设为0)"
             "按照上面的计算方法，对state_action1进行加工"
-            """
-            #饱和程度按探测者个数算
-            for i in state_action1.index:
-                if i==0:
-                    state_action1[i] = state_action1[i] - 1080 - 0
-                else:
-                    if len(Target_list[i].agent_num_list)<threshold:
-                        state_action1[i] = state_action1[i] - int( ((self.position[0] - Target_list[i].position[0]) ** 2 + (self.position[1] - Target_list[i].position[1]) ** 2) ** 0.5 )
-                    else:
-                        state_action1[i] = state_action1[i] - int( ((self.position[0] - Target_list[i].position[0]) ** 2 + (self.position[1] - Target_list[i].position[1]) ** 2) ** 0.5 ) - len(Target_list[i].agent_num_list） * 100 
-            """
             #饱和程度按功率算
             for i in state_action1.index:
                 if i==0:
@@ -95,17 +84,6 @@ class Agent(object):
                     break  # 由于已经经过了乱序处理，所以找到第一个就跳出
 
             "由于DataFram切片操作会改变原数据，所以需要对上面的切片操作复原"
-            """
-            # 饱和程度按探测者个数算
-            for i in state_action1.index:
-                if i==0:
-                    state_action1[i] = state_action1[i] + 1080 + 0
-                else:
-                    if len(Target_list[i].agent_num_list)<threshold:
-                        state_action1[i] = state_action1[i] + int( ((self.position[0] - Target_list[i].position[0]) ** 2 + (self.position[1] - Target_list[i].position[1]) ** 2) ** 0.5 )
-                    else:
-                        state_action1[i] = state_action1[i] + int( ((self.position[0] - Target_list[i].position[0]) ** 2 + (self.position[1] - Target_list[i].position[1]) ** 2) ** 0.5 ) + len(Target_list[i].agent_num_list) * 100 
-            """
             # 饱和程度按功率算
             for i in state_action1.index:
                 if i==0:
