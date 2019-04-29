@@ -1,8 +1,6 @@
 # encoding=utf-8
 
 """
-Reinforcement Learning: Q Learning
-
 author: zhulinhai
 
 此文件中包含Target类，是UI界面中一个探测目标target的抽象，并包含了与UI界面有联系的相关属性
