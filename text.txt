@@ -1,0 +1,21 @@
+摘要
+多目标规划是数学规划的一个分支，研究多于一个的目标函数在给定区域上的最优化，又称多目标优化。在现实应用场景中，众多问题都可抽象为具有多个约束条件和待优化指标的多目标规划问题。本文研究的“多目标探测任务优化”问题即属于多目标规划范畴。
+线性规划是运筹学中研究较早、发展较快、应用广泛、方法较成熟的一个重要分支。它是研究线性约束条件下线性目标函数的极值问题的数学理论和方法，也是单目标优化场景下的常用手段。
+强化学习是一种重要的机器学习方法。在较低的先验知识基础上，智能体Agent通过感知环境状态信息和不断地动作尝试来改善自己的行为，从而学习动态系统中的最优策略。相比传统强化学习，改进的多Agent强化学习利用多智能体协助学习，加深了对环境的感知程度，达到了并行处理的效果，不仅提高了算法的精度，也大大缩短了算法收敛时间。
+本文的主要工作是针对“多目标探测任务优化”问题设计了一种基于多Agent强化学习和线性规划的分层多目标规划算法，指出了算法各层的作用与实现方法，并进一步完成了算法可视化及性能验证。基于多Agent强化学习和线性规划的分层多目标规划算法，密切地结合了“多目标探测任务优化”问题的现实背景，算法主要包括任务分配优化层、探测功率优化层。前者基于经典的多Agent 强化学习理论与方法，结合问题背景，改进了智能体Agent的动作选择策略和学习策略，提高了对动态环境的感知能力，并使得Agent之间具备了一定的信息共享和协作能力。后者基于经典的线性规划理论与方法，结合问题背景，设计了目标函数与问题约束，在首层“任务分配优化层”完成对任务分配方案的阶段优化后，对所有智能体Agent的探测功率进行优化，获得渐优的全局功率，并反馈给首层，指导多Agent强化学习加速收敛。采用本算法之后，相比于传统的遗传算法，在解决“多目标探测任务优化”问题时，能够获得更优秀的优化结果、更快的优化时间以及更稳定的收敛过程。
+
+关键词：多目标规划 多Agent强化学习 线性规划 多目标探测任务
+
+
+
+
+
+
+
+Abstract
+Multiobjective programming is a branch of mathematical programming. It studies the optimization of more than one objective function in a given region, also known as multi-objective optimization. In practical application scenarios, many problems can be abstracted as multi-objective programming problems with multiple constraints and optimization indicators. The problem of "multi-objective detection task optimization" studied in this paper belongs to the category of multi-objective programming.
+Linear programming is an important branch of operational research, which has been studied earlier, developed faster, widely used and mature methods. It is not only a mathematical theory and method to study the extremum problem of linear objective function under linear constraints, but also a common method in single objective optimization scenarios.
+Reinforcement learning is an important machine learning method. On the basis of lower priori knowledge, agent improves its behavior by perceiving environmental state information and constantly trying to act, so as to learn the optimal strategy in dynamic systems. Compared with traditional reinforcement learning, improved multi-agent field learning uses multi-agent to assist learning, deepens the perception of the environment, achieves the effect of parallel processing, not only improves the accuracy of the algorithm, but also greatly shortens the convergence time of the algorithm.
+The main work of this paper is to design a hierarchical multi-objective programming algorithm based on Multi-Agent Reinforcement Learning and linear programming for the problem of "multi-objective detection task optimization". The functions and implementation methods of each layer of the algorithm are pointed out, and the visualization and performance verification of the algorithm are further completed. The hierarchical multi-objective programming algorithm based on Multi-Agent Reinforcement Learning and linear programming closely combines the realistic background of "multi-objective detection task optimization". The algorithm mainly includes task allocation optimization layer and detection power optimization layer. The former is based on the classical reinforcement learning theory and method of multi-agent, combines the problem background, improves the action selection strategy and learning strategy of agent, improves the perception ability of dynamic environment, and makes agent have certain information sharing and cooperation ability.The latter is based on the classical linear programming theory and method, and combines the background of the problem, designs the objective function and problem constraints. After the first level "task allocation optimization layer" completes the phase optimization of the task allocation scheme, the detection power of all agents is optimized to obtain the optimal global power, which is fed back to the first level to guide Multi-Agent Reinforcement Learning to accelerate convergence.Compared with the traditional genetic algorithm, this algorithm can obtain better optimization results, faster optimization time and more stable convergence process when solving the "multi-target detection task optimization" problem.
+
+Key words: Multiobjective Programming  Multi-Agent Reinforcement Learning   Linear Programming Multiobjective Detection Task
