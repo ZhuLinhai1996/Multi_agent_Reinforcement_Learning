@@ -270,7 +270,10 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             Y.append(results[i])
 
         plt.plot(X, Y)
+        plt.xlabel("Times")
+        plt.ylabel("Sum_power")
         plt.show()
+
 
     "MARL 算法运行控制按钮回调函数"
     def MARL_run(self):
@@ -338,7 +341,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             power_sum = 0
             power_sum_success = True  # 是否成功优化的标志
 
-            # 遍历每个Target
+            # 遍历每个Target，对其所关联的一组agent的功率进行线性优化
             for i in range(int(self.target_num.get()) + 1):
                 if i == 0:
                     pass
