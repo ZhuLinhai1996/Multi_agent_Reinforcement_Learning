@@ -275,6 +275,8 @@ class GA(object):
             X.append(i)
             Y.append(results[i][0])
 
+        plt.xlabel("Times")
+        plt.ylabel("Sum_power")
         plt.plot(X, Y)
         plt.show()
 
@@ -297,7 +299,7 @@ class GA(object):
             best_individual, best_fitness = self.best(fitness_value)  # 找最优的个体，即解，best_individual；和其对应的适应度best_fitness
             print("最优解："+str(best_individual))
             print("最优解的适应度："+str(best_fitness))
-            results.append([best_fitness/10000 , best_individual])  #/10000 是减小尺度方便作图
+            results.append([best_fitness , best_individual])  #/10000 是减小尺度方便作图
             # 将最优解和最好的适应度保存
             self.selection(fitness_value)
             self.crossover()
