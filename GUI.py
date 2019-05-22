@@ -286,7 +286,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
         "初始化算法对象，根据输入的探测源agent数，创建数量相同的agent对象，存储于MARL列表中；根据输入的探测目标target数，创建数量+1(多一个空目标)的target对象，存储于Target_list列表中"
         MARL = []
         for i in range(int(self.agent_num.get())):
-            agent = Agent(lable=i , position=self.dict_agent[str(i)] , state_begin=0 , actions=list(range(len(self.list_actions))))
+            agent = Agent(lable=i , position=self.dict_agent[str(i)] , state_begin=0 , actions=list(range(len(self.list_actions))) , learning_rate=float(self.MGRL_α.get()), reward_decay=float(self.MGRL_γ.get()), e_greedy=float(self.MGRL_ε.get()))
             MARL.append(agent)
         Target_list = []
         for i in range(int(self.target_num.get())+1):
@@ -340,6 +340,7 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             """
             power_sum = 0
             power_sum_success = True  # 是否成功优化的标志
+            C = 0 #线性规划激励值的权重系数，防止因为数量级的差异覆盖原来Q表中的结果
 
             # 遍历每个Target，对其所关联的一组agent的功率进行线性优化
             for i in range(int(self.target_num.get()) + 1):
@@ -380,11 +381,13 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
                         power_sum_success=False
                         break
                     else:
-                        power_sum = power_sum + res.fun
-                        # 将优化后的功率记录在每个agent的power_run属性里
+                        # 将优化后的功率记录在每个agent的power_run属性里,并进行线性规划学习，该target的总受到的探测功率的负值为奖励值
                         for power, agent_lable, rr in zip(res.x, Target_list[i].agent_num_list, rr_list):
                             MARL[agent_lable].power_run = power
+                            MARL[agent_lable].learn(res.fun*C)
                             print("agent编号：" + str(agent_lable) + "  探测功率：" + str(MARL[agent_lable].power_run) + "  rr：" + str(rr))
+
+                        power_sum = power_sum + res.fun  #记录整体的总功率
 
             if power_sum_success:
                 print("本次训练线性规划成功！！")
@@ -426,8 +429,8 @@ class GUI(tk.Tk, object):  # (tk.Tk, object)表示Maze类从(tk.Tk, object)两�
             target = Target(lable=i, position=self.dict_target[str(i)])
             Target_list.append(target)
 
-        population_size = 10
-        train_times = 100
+        population_size = int(self.GA_size.get())
+        train_times = int(self.GA_times.get())
         pc = 0.6
         pm = 0.01
         ga = GA(population_size=population_size , pc=pc , pm=pm , MARL=MARL , Target_list=Target_list , train_times=train_times)
